@@ -1,0 +1,86 @@
+import React, { useState } from 'react'
+import {View, Text, StyleSheet, TouchableOpacity, TextInput, Image} from 'react-native'
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import api from './src/services/api'
+
+
+export default function App(){
+  const [username, setUsername] = useState()
+  const [id, setId] = useState()
+  const [name, setName] = useState()
+  const [repos, setRepos] = useState()
+  const [criado, setCriado] = useState()
+  const [seguidores, setSeguidores] = useState()
+  const [seguindo, setSeguindo] = useState()
+  const [perfil, setPerfil] = useState('https://dlnews.com.br/imagens_noticias/img_403012020085645.jpg')
+
+
+  const consultaDev = async (dev) => {
+    const response = await api.get('/' + dev);
+    setId(response.data.id)
+    setName(response.data.name)
+    setRepos(response.data.public_repos)
+    setCriado(response.data.created_at)
+    setSeguidores(response.data.followers)
+    setSeguindo(response.data.following)
+    setPerfil(response.data.avatar_url)
+  }
+
+
+    return(
+      <View style={{marginTop: 60}}>
+        <View style={{borderBottomColor: "black", borderBottomWidth:1, alignItems: 'center'}}>
+          <Text style={{fontSize:24, marginBottom:10}}>Perfil dos Devs</Text>
+        </View>
+        <Image 
+          source={{ uri: perfil }}
+          style={{ width: 200, height: 200, marginLeft: 90, marginTop: 40}}
+        />
+        <View style={styles.container}>
+          <TextInput
+          style={styles.cep}
+          placeholder="Nome de Usuário do Github"
+          value={username}
+          onChangeText={(texto) => setUsername(texto)}
+          underlineColorAndroid="transparent"
+          />
+
+          <TouchableOpacity onPress={() => consultaDev(username)}>
+            <FontAwesome name='check' size={50} color='green'/>
+          </TouchableOpacity>
+
+        </View>
+        <View>
+          <Text style={styles.endereco}>ID: {id}</Text>
+          <Text style={styles.endereco}>Nome: {name}</Text>
+          <Text style={styles.endereco}>Repositórios: {repos}</Text>
+          <Text style={styles.endereco}>Criado em: {criado}</Text>
+          <Text style={styles.endereco}>Seguidores: {seguidores}</Text>
+          <Text style={styles.endereco}>Seguindo: {seguindo}</Text>
+        </View>
+
+      </View>    
+    )
+  }
+
+
+const styles = StyleSheet.create({
+  container:{
+    marginTop: 20,
+    alignItems: 'center',
+    flexDirection: 'row'
+  },
+  endereco:{
+    marginTop: 15,
+    fontSize: 20,
+    textAlign: 'left'
+  },
+  cep:{
+    width: 280,
+    height: 40,
+    borderColor: '#000',
+    borderWidth: 1,
+    padding: 10,
+    marginLeft: 40
+  }
+});

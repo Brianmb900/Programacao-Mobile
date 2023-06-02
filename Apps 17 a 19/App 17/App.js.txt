@@ -1,0 +1,75 @@
+import React, { useState } from 'react'
+import {View, Text, StyleSheet, TouchableOpacity, TextInput} from 'react-native'
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import api from './src/services/api'
+
+
+export default function App(){
+  const [cep, setCep] = useState()
+  const [endereco, setEndereco] = useState()
+  const [bairro, setBairro] = useState()
+  const [cidade, setCidade] = useState()
+  const [estado, setEstado] = useState()
+
+
+  const consultaCep = async (cep) => {
+    const response = await api.get('/' + cep + '/json/');
+    setEndereco(response.data.logradouro)
+    setBairro(response.data.bairro)
+    setCidade(response.data.localidade)
+    setEstado(response.data.uf)
+  }
+
+
+    return(
+      <View style={{marginTop: 60}}>
+        <View style={{borderBottomColor: "black", borderBottomWidth:1, alignItems: 'center'}}>
+          <Text style={{fontSize:24, marginBottom:10}}>CEP x Endereço</Text>
+        </View>
+        <View style={styles.container}>
+          <TextInput
+          style={styles.cep}
+          value={cep}
+          onChangeText={(texto) => setCep(texto)}
+          underlineColorAndroid="transparent"
+          keyboardType='numeric'
+          />
+
+          <TouchableOpacity onPress={() => consultaCep(cep)}>
+            <FontAwesome name='check' size={50} color='green'/>
+          </TouchableOpacity>
+
+        </View>
+        <View>
+          <Text style={styles.endereco}>CEP: {cep}</Text>
+          <Text style={styles.endereco}>Logradouro: {endereco}</Text>
+          <Text style={styles.endereco}>Bairro: {bairro}</Text>
+          <Text style={styles.endereco}>Cidade: {cidade}</Text>
+          <Text style={styles.endereco}>Estado: {estado}</Text>
+        </View>
+
+      </View>    
+    )
+  }
+
+
+const styles = StyleSheet.create({
+  container:{
+    marginTop: 20,
+    alignItems: 'center',
+    flexDirection: 'row'
+  },
+  endereco:{
+    marginTop: 15,
+    fontSize: 20,
+    textAlign: 'left'
+  },
+  cep:{
+    width: 280,
+    height: 40,
+    borderColor: '#000',
+    borderWidth: 1,
+    padding: 10,
+    marginLeft: 40
+  }
+});
